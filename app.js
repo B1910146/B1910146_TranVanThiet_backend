@@ -3,8 +3,15 @@ const cors = require("cors");
 
 const app = express();
 const contactsRouter = require("./app/routes/contact.route");
-
+app.use(cors());
+app.use(express.json());
 const ApiError = require("./app/api-error");
+
+app.get("/", (req, res) => {
+    res.json({message: "Welcome to contact book application."});
+});
+
+app.use("/api/contacts", contactsRouter);
 
 app.use((req, res, next) => {
     return next(new ApiError(404, "Resource not found"));
@@ -16,13 +23,10 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.use(cors());
-app.use(express.json());
 
-app.get("/", (req, res) => {
-    res.json({message: "Welcome to contact book application."});
-});
 
-app.use("/api/contacts", contactsRouter);
+
+
+
 
 module.exports = app;
