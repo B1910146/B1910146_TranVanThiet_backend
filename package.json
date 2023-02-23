@@ -9,8 +9,10 @@
   "author": "B1910146",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "express-session": "^1.17.3",
     "mongodb": "^5.0.1"
   },
   "devDependencies": {

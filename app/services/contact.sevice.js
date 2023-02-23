@@ -11,6 +11,7 @@ class ContactService {
             email: payload.email,
             address: payload.address,
             phone: payload.phone,
+            userId: payload.userId,
             favorite: payload.favorite,
         };
 
