@@ -74,7 +74,7 @@ exports.login_check = async (req, res) => {
 
 exports.logout = async (req, res) => {
     req.session.destroy(function(err) {
-         return res.status(200).json({status: 'Đã đăng nhập.'})
+         return res.status(200).json({status: 'Đã đăng xuất.'})
     })
 }
 
