@@ -12,12 +12,12 @@ app.use(cors());
 app.use(express.json());
 const ApiError = require("./app/api-error");
 
-// app.use(session({
-//     resave: true, 
-//     saveUninitialized: true, 
-//     secret: 'B1910146', 
-//     cookie: { maxAge: 60000 }})
-// );
+app.use(session({
+    resave: true, 
+    saveUninitialized: true, 
+    secret: 'B1910146', 
+    cookie: { maxAge: 60000 }})
+);
 
 // app.post('/api/users/login', (req, res, next) => {
 //     if (!req.body?.username) {
@@ -53,6 +53,8 @@ const ApiError = require("./app/api-error");
 // })
 
 app.get("/", (req, res) => {
+    // req.session.hello = 1;
+    // console.log(req.session.hello);
     res.json({message: "Welcome to contact book application."});
 });
 
@@ -69,10 +71,5 @@ app.use((err, req, res, next) => {
         message: err.message || "Internal Server Error",
     });
 });
-
-
-
-
-
 
 module.exports = app;

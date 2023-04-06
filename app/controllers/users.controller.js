@@ -4,14 +4,21 @@ const ApiError = require("../api-error");
 const express = require("express");
 const cors = require("cors");
 const session = require("express-session");
+const cookieParser = require('cookie-parser');
 
 const app = express();
+
+app.use(express.json());
 
 app.use(session({
     resave: true, 
     saveUninitialized: true, 
     secret: 'B1910146', 
-    cookie: { maxAge: 60000 }})
+    cookie: {
+        path    : '/',
+        httpOnly: false,
+        maxAge  : 24*60*60*1000
+      },})
 );
 
 exports.create = async (req, res, next) => {
@@ -33,7 +40,7 @@ exports.create = async (req, res, next) => {
     }
 };
 
-exports.login = async (req, res, next) => {
+exports.login = async (req, res) => {
     if (!req.body?.username) {
         return next(new ApiError(401, "Username can't be empty."));
     }
@@ -46,45 +53,29 @@ exports.login = async (req, res, next) => {
         if (loggedInUser == null) {
             return res.send("Không tìm thấy user!");
         } 
-        // console.log(loggedInUser, "a");
+        // console.log(req.body?.password, "a");
         if (loggedInUser.password == req.body?.password) {
-            req.session.User = { username: req.body.username }
+            req.session.userID = loggedInUser._id.toString();
+            // console.log(loggedInUser._id.toString());
            return res.send("Đăng nhập thành công!");
         }
-        // return res.send("Login thanh cong");
     } catch (error) {
         new ApiError(500, "An error occured while signing in.")
     }
 };
 
-exports.login_check = async (req, res, next) => {
-        if(req.session.User){
-        return res.status(200).json({status: 'Đã đăng nhập', session: req.session.User})
+exports.login_check = async (req, res) => {
+    // console.log(req.session.userID);
+        if(req.session.userID){
+        return res.status(200).json({status: 'Đã đăng nhập', session: req.session.userID})
     }
-    return res.status(200).json({status: 'Chưa đăng nhập', session: 'No session'})
+    return res.status(200).json({status: 'Chưa đăng nhập', session: "No Session"})
 }
 
-exports.logout = async (req, res, next) => {
+exports.logout = async (req, res) => {
     req.session.destroy(function(err) {
-         return res.status(200).json({status: 'Đã đăng xuất.'})
+         return res.status(200).json({status: 'Đã đăng nhập.'})
     })
 }
 
-// exports.findContacts = async (req, res, next) => {
-//     let documents = [];
 
-//     try {
-//         const contactService = new ContactService(MongoDB.client);
-//         const { name } = req.query;
-//         if (name) {
-//             documents = await contactService.findByName(name);
-//         } else {
-//             documents = await contactService.find({});
-//         }
-//     } catch (error) {
-//         return next(
-//             new ApiError(500, "An error occured while creating the contacts.")
-//         );
-//     }
-//     return res.send(documents);
-// };

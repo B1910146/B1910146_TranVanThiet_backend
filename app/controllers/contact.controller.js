@@ -2,6 +2,19 @@ const ContactService = require("../services/contact.sevice");
 const MongoDB = require("../utils/mongodb.util");
 const ApiError = require("../api-error");
 
+const express = require("express");
+const cors = require("cors");
+const session = require("express-session");
+
+const app = express();
+
+app.use(session({
+    resave: true, 
+    saveUninitialized: true, 
+    secret: 'B1910146', 
+    cookie: { maxAge: 60000 }})
+);
+
 exports.create = async (req, res, next) => {
     // if (!req.body?.name) {
     //     return next(new ApiError(401, "Name can't be empty."));
@@ -9,7 +22,7 @@ exports.create = async (req, res, next) => {
     console.log(req.body);
     try {
         const contactService = new ContactService(MongoDB.client);
-        const document = await contactService.create(req.body);
+        const document = await contactService.create(req.body, req.session.userID);
         return res.send(document);
     } catch (error) {
         return next(
